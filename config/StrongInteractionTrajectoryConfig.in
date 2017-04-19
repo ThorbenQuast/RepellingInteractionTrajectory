@@ -1,0 +1,5 @@
+// the configured options and settings for StrongInteractionTrajectory
+#define StrongInteractionTrajectory_VERSION_MAJOR @StrongInteractionTrajectory_VERSION_MAJOR@
+#define StrongInteractionTrajectory_VERSION_MINOR @StrongInteractionTrajectory_VERSION_MINOR@
+#define StrongInteractionTrajectory_AUTHOR @StrongInteractionTrajectory_AUTHOR@
+#define StrongInteractionTrajectory_DATE @StrongInteractionTrajectory_DATE@
