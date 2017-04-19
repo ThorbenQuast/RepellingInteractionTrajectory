@@ -11,14 +11,14 @@
 
 int main(int argc, char* argv[]){
   std::cout<<"StrongInteractionTrajectory v."<<StrongInteractionTrajectory_VERSION_MAJOR<<"."<<StrongInteractionTrajectory_VERSION_MINOR<<std::endl;
-  if (argc < 3){
-    std::cout<<"Correct usage: Repulsion(0,1) OutputFile(<path>) N_sim(<integer>)"<<std::endl;
+  if (argc < 2){
+    std::cout<<"Correct usage: OutputFile(<path>) N_sim(<integer>)"<<std::endl;
     return 1;
   }
-  bool repulsion = atoi(argv[1]);
-  int N_sim = atoi(argv[3]);
+  bool repulsion = true;
+  int N_sim = atoi(argv[2]);
 
-  std::cout<<"Running with repulsion: "<<repulsion<<"   creating "<<argv[2]<<"  and simulating "<<N_sim<<" trajectories"<<std::endl;
+  std::cout<<"Running with repulsion: "<<repulsion<<"   creating "<<argv[1]<<"  and simulating "<<N_sim<<" trajectories"<<std::endl;
 
   //intialize the random number generator
   srand (time(NULL));
@@ -31,8 +31,6 @@ int main(int argc, char* argv[]){
   double angleCut = 1.;    //initial direction angle cut (if the angle between the quarks is higher after generation, trajectories are not computed)
   double T_max = 1e-8;   //maximum time to simulate the trajectory
 
-  std::ofstream outfile;
-  outfile.open(argv[2]);
 
   simResult results;
   results.set_energy(Energy);
@@ -47,13 +45,16 @@ int main(int argc, char* argv[]){
     _event_result = runTrajectorySimulation(repulsion, Energy, radialDistance, coincidenceTime, angleCut, T_max, results);
     if (_event_result.first >= 0) {
       i++;
+      std::cout<<std::endl<<"  ****  "<<std::endl<<std::endl;;
       std::cout<<"Iteration "<<i<<":    relPt="<<_event_result.first<<"   weight="<<_event_result.second<<std::endl;
-      outfile << _event_result.first <<","<<_event_result.second<<std::endl;
+      std::cout<<std::endl<<"  ****  "<<std::endl;
     }
   }
 
-  results.printEntries();
-
+  std::ofstream outfile;
+  outfile.open(argv[1], std::ofstream::out | std::ofstream::trunc);
+  results.printHeader(outfile);
+  results.printEntries(outfile);
   outfile.close();
   return 0;
 }

@@ -1,7 +1,8 @@
 #include "force.h"
 #include <iostream>
 
-//pxl::Basic3Vector RelativisticForceLab(Particle* P, Particle* ParticleRef, bool repulsion) {
+// 1/r potential is modified analogous to the Lienard-Wiechert-potential in electro-magnetism:
+// https://en.wikipedia.org/wiki/Liénard–Wiechert_potential
 pxl::Basic3Vector Force(Particle* P, Particle* ParticleRef, bool repulsion) {
   //convert distances into natural unit!
   std::vector<double> dist;
@@ -12,7 +13,6 @@ pxl::Basic3Vector Force(Particle* P, Particle* ParticleRef, bool repulsion) {
   
   std::vector<double> beta;
   for (size_t i=0; i<3; i++) beta.push_back(ParticleRef->getV(i)/c);
-  //for (size_t i=0; i<3; i++) beta.push_back(0.0);
   
   //formula for the strong force using a classical analogon
   double cF = repulsion ? +1./3. : -2./3.;  //colour factor and sign of the potential
@@ -26,7 +26,7 @@ pxl::Basic3Vector Force(Particle* P, Particle* ParticleRef, bool repulsion) {
   return F;
 }
 
-
+/*
 pxl::Basic3Vector ClassicForce(Particle* P, Particle* ParticleRef, bool repulsion) {
 //pxl::Basic3Vector Force(Particle* P, Particle* ParticleRef, bool repulsion) {
   //convert distances into natural unit!
@@ -48,7 +48,7 @@ pxl::Basic3Vector ClassicForce(Particle* P, Particle* ParticleRef, bool repulsio
 }
 
 
-//deprecated
+
 pxl::Basic3Vector _Force(Particle* P, Particle* ParticleRef, bool repulsion) {
 //todo: debug the boost into rest frame
 
@@ -90,3 +90,4 @@ pxl::Basic3Vector _Force(Particle* P, Particle* ParticleRef, bool repulsion) {
 
   return F;
 }
+*/

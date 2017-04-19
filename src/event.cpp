@@ -6,9 +6,9 @@ Event::Event() {
     _N_t = 0;
     _maxRadius = 0;
     _E = 0;
-    angleCut = pi;    //Todo: externalize, make configurable
-    _coincidenceTime = 0.;  //Todo: externalize, make configurable
-    repulsion = false;  //Todo: externalize, make configurable
+    angleCut = pi;    
+    _coincidenceTime = 0.;  
+    repulsion = false;  
 
     //book keeping for the simulation
     weight = 0.;
@@ -19,11 +19,11 @@ Event::Event() {
     //generated objects
     ParticleA = new Particle();
     ParticleB = new Particle();
-    deltaT = 0.;    //time in between two collisions, Todo: evernalize, make configurable
+    deltaT = 0.;    //time in between two collisions
 
     weights = new xsecWeight();
     weights->setSourceMass(0.511e-3);  //sources are electrons   
-    weights->setTargetMass(1.0);     //targets are protons (with mass: 1 GeV)
+    weights->setTargetMass(0.931);     //targets are protons (with mass: 931 MeV)
 };
 
 
@@ -64,22 +64,22 @@ void Event::generate(simResult &results) {
   
   //define the quark masses to be other from the up or bottom
   double randMassA = rand()*1./(RAND_MAX);
-  //double massAGeV = randMassA<0.5 ? 0.0023 : 0.0048;
-  double massAGeV = 0.0023;
+  double massAGeV = randMassA<0.5 ? 0.0023 : 0.0048;
+  //double massAGeV = 0.0023;
 
   double randMassB = rand()*1./(RAND_MAX);
-  //double massBGeV = randMassB<0.5 ? 0.0023 : 0.0048;
-  double massBGeV = 0.0023;
+  double massBGeV = randMassB<0.5 ? 0.0023 : 0.0048;
+  //double massBGeV = 0.0023;
 
 
   //generate the relative displacements, ParticleA is always defined to be in the origin
   ParticleA->setLabPosition(0.0, 0.0, 0.0, 0.0);
-  //double deltaX12 = _maxRadius*rand()*1./(RAND_MAX)/sqrt(3.);
-  double deltaX12 = 1.0e-15;//_maxRadius;
-  //double deltaY12 = _maxRadius*rand()*1./(RAND_MAX)/sqrt(3.);
-  double deltaY12 = 0;
-  //double deltaZ12 = _maxRadius*rand()*1./(RAND_MAX)/sqrt(3.);
-  double deltaZ12 = 0;
+  double deltaX12 = _maxRadius*rand()*1./(RAND_MAX)/sqrt(3.);
+  //double deltaX12 = 1.0e-15;//_maxRadius;
+  double deltaY12 = _maxRadius*rand()*1./(RAND_MAX)/sqrt(3.);
+  //double deltaY12 = 0;
+  double deltaZ12 = _maxRadius*rand()*1./(RAND_MAX)/sqrt(3.);
+  //double deltaZ12 = 0;
   ParticleB->setLabPosition(0.0, deltaX12, deltaY12, deltaZ12);
 
   //set the coincidence time:
@@ -98,14 +98,13 @@ void Event::generate(simResult &results) {
   OriginalQuarkA->setP4(px_A_orig, py_A_orig, pz_A_orig, E_A_orig);
 
   Particle* outgoingElectron1 = new Particle();
-  //generateKinematic(IncidentElectron, OriginalQuarkA, outgoingElectron1, ParticleA);
-  outgoingElectron1->setP4(-1.01304, 1.35215, 43.8244, 43.8569);
-  ParticleA->setP4(1.01207, -1.29981, 16.1292, 16.2131);
+  generateKinematic(IncidentElectron, OriginalQuarkA, outgoingElectron1, ParticleA);
+  //outgoingElectron1->setP4(-1.01304, 1.35215, 43.8244, 43.8569);
+  //ParticleA->setP4(1.01207, -1.29981, 16.1292, 16.2131);
   //ParticleA->setP4(0., 0., 3.5, sqrt(3.5*3.5+pow(massAGeV,2)));
 
   double QA = outgoingElectron1->getQ2(IncidentElectron);
   double thetaA = ParticleA->getTheta();
-
 
 
   //dice the kinematics of the second particle according to its electron
@@ -117,9 +116,9 @@ void Event::generate(simResult &results) {
   OriginalQuarkB->setP4(px_B_orig, py_B_orig, pz_B_orig, E_B_orig);
 
   Particle* outgoingElectron2 = new Particle();
-  //generateKinematic(IncidentElectron, OriginalQuarkB, outgoingElectron2, ParticleB);
-  outgoingElectron2->setP4(-0.729088, 1.19555, 31.0232, 31.0548 );
-  ParticleB->setP4(0.780043, -1.10741, 29.0273, 29.0589);
+  generateKinematic(IncidentElectron, OriginalQuarkB, outgoingElectron2, ParticleB);
+  //outgoingElectron2->setP4(-0.729088, 1.19555, 31.0232, 31.0548 );
+  //ParticleB->setP4(0.780043, -1.10741, 29.0273, 29.0589);
   //ParticleB->setP4(0., 0., 3.5, sqrt(3.5*3.5+pow(massBGeV,2)));
   double QB = outgoingElectron2->getQ2(IncidentElectron);
   double thetaB = ParticleB->getTheta();
@@ -153,6 +152,12 @@ void Event::generate(simResult &results) {
   
     results.addEntry("mass_q1", massAGeV);
     results.addEntry("mass_q2", massBGeV);
+    results.addEntry("IP1_x", 0.);
+    results.addEntry("IP1_y", 0.);
+    results.addEntry("IP1_z", 0.);
+    results.addEntry("IP2_x", deltaX12);
+    results.addEntry("IP2_y", deltaY12);
+    results.addEntry("IP2_z", deltaZ12);
     results.addEntry("px_e1_in", 0.);
     results.addEntry("py_e1_in", 0.);
     results.addEntry("pz_e1_in", sqrt(pow(_E, 2) - pow(511000.0e-9, 2)));
@@ -189,6 +194,7 @@ void Event::generate(simResult &results) {
     results.addEntry("Q2_2", QB);
     results.addEntry("DeltaR_initial", outgoingElectron1->getDeltaR(outgoingElectron2));
     results.addEntry("relPt_initial", ParticleA->getRelativePtToCommonAxis(ParticleB));
+    results.addEntry("event_weight", weight);
   }
 
   delete IncidentElectron;
@@ -200,18 +206,12 @@ void Event::generate(simResult &results) {
 double Event::computeStep(simResult &results) {
   //if (_t > _tmax) return ParticleA->getDeltaR(ParticleB); //return the final value
   if (_t > _tmax) {
-    std::cout<<"After Simulation: "<<std::endl;
+    std::cout<<"Final kinematics: "<<std::endl;
     std::cout<<"Particle 1"<<std::endl;
-    std::cout<<"    quark vx: "<<ParticleA->getV(0)<<std::endl;
-    std::cout<<"    quark vy: "<<ParticleA->getV(1)<<std::endl;
-    std::cout<<"    quark vz: "<<ParticleA->getV(2)<<std::endl;
     std::cout<<"    quark px: "<<ParticleA->getPx()<<std::endl;
     std::cout<<"    quark py: "<<ParticleA->getPy()<<std::endl;
     std::cout<<"    quark pz: "<<ParticleA->getPz()<<std::endl;
     std::cout<<"Particle 2"<<std::endl;
-    std::cout<<"    quark vx: "<<ParticleB->getV(0)<<std::endl;
-    std::cout<<"    quark vy: "<<ParticleB->getV(1)<<std::endl;
-    std::cout<<"    quark vz: "<<ParticleB->getV(2)<<std::endl;
     std::cout<<"    quark px: "<<ParticleB->getPx()<<std::endl;
     std::cout<<"    quark py: "<<ParticleB->getPy()<<std::endl;
     std::cout<<"    quark pz: "<<ParticleB->getPz()<<std::endl;

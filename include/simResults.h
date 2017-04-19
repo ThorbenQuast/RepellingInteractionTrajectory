@@ -13,8 +13,8 @@ class simResult {
   public:
     simResult();
     void addEntry(std::string, double value);
-    void printHeader();
-    void printEntries();
+    void printHeader(std::ofstream&);
+    void printEntries(std::ofstream&);
 
     void set_energy(double energy) { _energy = energy; };
     void set_radialDistance(double radialDistance) { _radialDistance = radialDistance; };
