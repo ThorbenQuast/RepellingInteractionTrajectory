@@ -19,6 +19,7 @@ data = np.genfromtxt(data_file, delimiter=",", skip_header=1, names = column_nam
 
 max_x = max(data["relPt_final"]-data["relPt_initial"])
 hist_relPtGain = ROOT.TH1F("gain_pT", "gain_pT", 100, 0.0, max_x)
+hist_relPtGain.Sumw2()
 
 for i in range(len(data["relPt_final"])):
   hist_relPtGain.Fill(data["relPt_final"][i]-data["relPt_initial"][i], data["event_weight"][i])

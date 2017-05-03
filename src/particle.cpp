@@ -63,6 +63,14 @@ void Particle::computeMomentumFromForce(pxl::Basic3Vector Force, double dt) {   
 
 }
 
+void Particle::setBjorkenX(double x) {
+  bjorken_x = x;
+}
+
+double Particle::getBjorkenX() {
+  return bjorken_x;
+}
+
 void Particle::computeStep(double dt) {
   lab_t += dt;
   eigen_t += dt/this->getGamma();

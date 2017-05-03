@@ -8,28 +8,31 @@ std::pair<double, double> compute_phi_theta(double a, double b, double X, double
   double theta;double phi;
 
   double left_side = (pow(a, 2)+pow(b, 2)-pow(X, 2)+pow(Y, 2))/(2*Y*sqrt(pow(a, 2)+pow(b, 2)));
-  if (a>0)
+  if (a>0) {
     theta = asin(left_side)-atan(b/a);
-  else if (b>0)
+  }
+  else if (b>0) {
     theta = acos(left_side)+atan(a/b);
+  }
   else {
     theta = asin(left_side)-(atan(b/a)-pi);
   }
 
-
   double sin_phi = (a-Y*sin(theta))/X;
   double cos_phi = (b-Y*cos(theta))/X;
 
-
-  if (sin_phi>0 && cos_phi>0)
+  if (sin_phi>0 && cos_phi>0) {
     phi = asin(sin_phi);
-  else if (sin_phi>0)
+  }
+  else if (sin_phi>0) {
     phi = acos(cos_phi);
-  else if (cos_phi>0)
+  }
+  else if (cos_phi>0) {
     phi = asin(sin_phi);
-  else 
-    phi = asin(sin_phi)+pi/2;
-
+  }
+  else {
+    phi = -asin(sin_phi)+pi;
+  }
 
   return std::make_pair(phi, theta);
 }
@@ -52,6 +55,9 @@ void generateKinematic(Particle* IncidentElectron, Particle* OriginalQuark, Part
   double electron_pt;
   double quark_pt;
 
+
+  double electron_px; double electron_py; double quark_px; double quark_py;
+  
   bool invalidKinematics = true;
   do {
     fraction_Energy = rand()*1./(RAND_MAX);
@@ -72,24 +78,29 @@ void generateKinematic(Particle* IncidentElectron, Particle* OriginalQuark, Part
   } while(invalidKinematics);
 
   //determine the transverse kinematics
-  
   std::pair<double, double> electronAngle_quarkAngle = compute_phi_theta(sum_py, sum_px, electron_pt, quark_pt);
-  double electron_px = electron_pt*cos(electronAngle_quarkAngle.first);
-  double electron_py = electron_pt*sin(electronAngle_quarkAngle.first);
-  double quark_px = quark_pt*cos(electronAngle_quarkAngle.second);
-  double quark_py = quark_pt*sin(electronAngle_quarkAngle.second);
+  electron_px = electron_pt*cos(electronAngle_quarkAngle.first);
+  electron_py = electron_pt*sin(electronAngle_quarkAngle.first);
+  quark_px = quark_pt*cos(electronAngle_quarkAngle.second);
+  quark_py = quark_pt*sin(electronAngle_quarkAngle.second);
+
+    
+  
+
 
   //std::cout<<"sum_px: "<<sum_px<<"   electron_px: "<<electron_px<<"   quark px: "<<quark_px<<std::endl;
   //std::cout<<"sum_py: "<<sum_py<<"   electron_py: "<<electron_py<<"   quark py: "<<quark_py<<std::endl;
   //std::cout<<"sum_pz: "<<sum_pz<<"   electron_pz: "<<electron_pz<<"   quark pz: "<<quark_pz<<std::endl;
   //std::cout<<"sum_E: "<<sum_E<<"   electron_E: "<<electron_E<<"   quark E: "<<quark_E<<std::endl;
+  //std::cout<<std::endl; 
 
   outgoingElectron->setP4(electron_px, electron_py, electron_pz, electron_E);
   Quark->setP4(quark_px, quark_py, quark_pz, quark_E);
 
+
+  double bjorken_x = outgoingElectron->getQ2(IncidentElectron)/(2.*0.931*(IncidentElectron->getE()-outgoingElectron->getE()));
+  OriginalQuark->setBjorkenX(bjorken_x);
+
 };
 
-double eta_q(double theta_q) {
-    return -log(tan(theta_q/2.0));
-};
 

@@ -5,6 +5,6 @@
 #include "event.h"
 #include "simResults.h"
 
-std::pair<double, double> runTrajectorySimulation(bool,double,double,double,double,double,simResult&);
+std::pair<double, double> runTrajectorySimulation(bool,double,double,double,double,double,double,simResult&);
 
 #endif

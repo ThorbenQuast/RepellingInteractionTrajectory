@@ -20,6 +20,7 @@ class Event{
     void setTMax(double tmax);
     void setMaxRadius(double maxR);
     void setEnergy(double E);
+    void setElectronBeamAngle(double);
     void setAngleCut(double angleCut);
     void setCoincidenceTime(double coincidenceTime);
     void setRepulsion(double repulsion);
@@ -33,6 +34,8 @@ class Event{
     int _N_t;
     double _maxRadius;
     double _E;
+    double _electronBeamAngle;
+    double _s;
     double angleCut;
     double _coincidenceTime;
     bool repulsion;
@@ -47,8 +50,6 @@ class Event{
     Particle* ParticleA;
     Particle* ParticleB;
     double deltaT;
-
-    xsecWeight* weights;
   
 };
 

@@ -6,6 +6,8 @@ Event::Event() {
     _N_t = 0;
     _maxRadius = 0;
     _E = 0;
+    _s = 0.;
+    _electronBeamAngle = 0.;    //mixing angle between y and z momentum components
     angleCut = pi;    
     _coincidenceTime = 0.;  
     repulsion = false;  
@@ -21,9 +23,6 @@ Event::Event() {
     ParticleB = new Particle();
     deltaT = 0.;    //time in between two collisions
 
-    weights = new xsecWeight();
-    weights->setSourceMass(0.511e-3);  //sources are electrons   
-    weights->setTargetMass(0.931);     //targets are protons (with mass: 931 MeV)
 };
 
 
@@ -41,7 +40,11 @@ void Event::setMaxRadius(double maxR) {
 
 void Event::setEnergy(double E) {
   _E = E;
-  weights->setSourceEnergy(E);
+  _s = 2 * 0.931 * E;   //proton mass is assumed
+}
+
+void Event::setElectronBeamAngle(double beamAngle) {
+  _electronBeamAngle = beamAngle*pi/180.;
 }
 
 void Event::setAngleCut(double angleCutDegree) {  //argument is in degrees
@@ -85,11 +88,13 @@ void Event::generate(simResult &results) {
   //set the coincidence time:
   deltaT = rand()*1./(RAND_MAX)*_coincidenceTime;
 
-  Particle* IncidentElectron = new Particle();
-  IncidentElectron->setP4(0., 0., sqrt(pow(_E, 2) - pow(511000.0e-9, 2)), _E);
 
+  double p_electron = sqrt(pow(_E, 2) - pow(511000.0e-9, 2));
+  
   /**********************/
   //generate the kinematics!
+  Particle* IncidentElectron1 = new Particle();
+  IncidentElectron1->setP4(0., 0., p_electron, _E);
   Particle* OriginalQuarkA = new Particle();
   double px_A_orig = 0.2*(rand()*1./(RAND_MAX)-0.5)/sqrt(3.);
   double py_A_orig = 0.2*(rand()*1./(RAND_MAX)-0.5)/sqrt(3.);
@@ -98,15 +103,18 @@ void Event::generate(simResult &results) {
   OriginalQuarkA->setP4(px_A_orig, py_A_orig, pz_A_orig, E_A_orig);
 
   Particle* outgoingElectron1 = new Particle();
-  generateKinematic(IncidentElectron, OriginalQuarkA, outgoingElectron1, ParticleA);
+  generateKinematic(IncidentElectron1, OriginalQuarkA, outgoingElectron1, ParticleA);
   //outgoingElectron1->setP4(-1.01304, 1.35215, 43.8244, 43.8569);
   //ParticleA->setP4(1.01207, -1.29981, 16.1292, 16.2131);
   //ParticleA->setP4(0., 0., 3.5, sqrt(3.5*3.5+pow(massAGeV,2)));
 
-  double QA = outgoingElectron1->getQ2(IncidentElectron);
+  double QA = outgoingElectron1->getQ2(IncidentElectron1);
   double thetaA = ParticleA->getTheta();
 
 
+  Particle* IncidentElectron2 = new Particle();
+  IncidentElectron2->setP4(0., sin(_electronBeamAngle)*p_electron, cos(_electronBeamAngle)*p_electron, _E);
+  
   //dice the kinematics of the second particle according to its electron
   Particle* OriginalQuarkB = new Particle();
   double px_B_orig = 0.2*(rand()*1./(RAND_MAX)-0.5)/sqrt(3.);
@@ -116,20 +124,21 @@ void Event::generate(simResult &results) {
   OriginalQuarkB->setP4(px_B_orig, py_B_orig, pz_B_orig, E_B_orig);
 
   Particle* outgoingElectron2 = new Particle();
-  generateKinematic(IncidentElectron, OriginalQuarkB, outgoingElectron2, ParticleB);
+  generateKinematic(IncidentElectron2, OriginalQuarkB, outgoingElectron2, ParticleB);
   //outgoingElectron2->setP4(-0.729088, 1.19555, 31.0232, 31.0548 );
   //ParticleB->setP4(0.780043, -1.10741, 29.0273, 29.0589);
   //ParticleB->setP4(0., 0., 3.5, sqrt(3.5*3.5+pow(massBGeV,2)));
-  double QB = outgoingElectron2->getQ2(IncidentElectron);
+  double QB = outgoingElectron2->getQ2(IncidentElectron2);
   double thetaB = ParticleB->getTheta();
 
   /**********************/
 
 
-  //weight = weights->_d2sigma_dthetaq_dt(thetaA, QA)*weights->_d2sigma_dthetaq_dt(thetaB, QB);
-  weight = 1.0;
+  weight = d2sigma_dthetaq_dt(OriginalQuarkA->getBjorkenX(), QA, _s) * d2sigma_dthetaq_dt(OriginalQuarkB->getBjorkenX(), QB, _s);
 
-  if (outgoingElectron1->getDeltaR(outgoingElectron2) > angleCut) weight = 0.;
+  //cut on outgoing quark flight angle w.r.t. each other
+  if (ParticleA->getDeltaR(ParticleB) > angleCut) weight = 0.;
+
 
   if (weight>0) {
     std::cout<<"DeltaR = "<<outgoingElectron1->getDeltaR(outgoingElectron2)<<std::endl;
@@ -158,18 +167,19 @@ void Event::generate(simResult &results) {
     results.addEntry("IP2_x", deltaX12);
     results.addEntry("IP2_y", deltaY12);
     results.addEntry("IP2_z", deltaZ12);
-    results.addEntry("px_e1_in", 0.);
-    results.addEntry("py_e1_in", 0.);
-    results.addEntry("pz_e1_in", sqrt(pow(_E, 2) - pow(511000.0e-9, 2)));
-    results.addEntry("E_e1_in", _E);
-    results.addEntry("px_e2_in", 0.);
-    results.addEntry("py_e2_in", 0.);
-    results.addEntry("pz_e2_in", sqrt(pow(_E, 2) - pow(511000.0e-9, 2)));
-    results.addEntry("E_e2_in", _E);
+    results.addEntry("px_e1_in", IncidentElectron1->getPx());
+    results.addEntry("py_e1_in", IncidentElectron1->getPy());
+    results.addEntry("pz_e1_in", IncidentElectron1->getPz());
+    results.addEntry("E_e1_in", IncidentElectron1->getE());
+    results.addEntry("px_e2_in", IncidentElectron2->getPx());
+    results.addEntry("py_e2_in", IncidentElectron2->getPy());
+    results.addEntry("pz_e2_in", IncidentElectron2->getPz());
+    results.addEntry("E_e2_in", IncidentElectron2->getE());
     results.addEntry("px_q1_in", px_A_orig);
     results.addEntry("py_q1_in", py_A_orig);
     results.addEntry("pz_q1_in", pz_A_orig);
     results.addEntry("E_q1_in", E_A_orig);
+    results.addEntry("x_q1", OriginalQuarkA->getBjorkenX());
     results.addEntry("px_e1_out", outgoingElectron1->getPx());
     results.addEntry("py_e1_out", outgoingElectron1->getPy());
     results.addEntry("pz_e1_out", outgoingElectron1->getPz());
@@ -179,10 +189,11 @@ void Event::generate(simResult &results) {
     results.addEntry("pz_q1_out", ParticleA->getPz());
     results.addEntry("E_q1_out", ParticleA->getE());
     results.addEntry("Q2_1", QA);
-    results.addEntry("px_q2_in", px_A_orig);
-    results.addEntry("py_q2_in", py_A_orig);
-    results.addEntry("pz_q2_in", pz_A_orig);
-    results.addEntry("E_q2_in", E_A_orig);
+    results.addEntry("px_q2_in", px_B_orig);
+    results.addEntry("py_q2_in", py_B_orig);
+    results.addEntry("pz_q2_in", pz_B_orig);
+    results.addEntry("E_q2_in", E_B_orig);
+    results.addEntry("x_q2", OriginalQuarkB->getBjorkenX());
     results.addEntry("px_e2_out", outgoingElectron2->getPx());
     results.addEntry("py_e2_out", outgoingElectron2->getPy());
     results.addEntry("pz_e2_out", outgoingElectron2->getPz());
@@ -192,12 +203,13 @@ void Event::generate(simResult &results) {
     results.addEntry("pz_q2_out", ParticleB->getPz());
     results.addEntry("E_q2_out", ParticleB->getE());
     results.addEntry("Q2_2", QB);
-    results.addEntry("DeltaR_initial", outgoingElectron1->getDeltaR(outgoingElectron2));
+    results.addEntry("DeltaR_initial", ParticleA->getDeltaR(ParticleB));
     results.addEntry("relPt_initial", ParticleA->getRelativePtToCommonAxis(ParticleB));
     results.addEntry("event_weight", weight);
   }
 
-  delete IncidentElectron;
+  delete IncidentElectron1;
+  delete IncidentElectron2;
   delete outgoingElectron1;
   delete outgoingElectron2;
 }

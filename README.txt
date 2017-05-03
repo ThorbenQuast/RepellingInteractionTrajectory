@@ -18,7 +18,7 @@ This installs the program main in that build directory.
 
 Running the trajectory computation from the main directoy:
 - cd into the directory
-- ./build/main sim_results.csv 100  (simulates 100 trajectories assuming the repulsive potential)
+- ./build/trajectory sim_results.csv 100  (simulates 100 trajectories assuming the repulsive potential)
 
 Plotting the angular distances for the attractive and repulsive case from the main directory:
 - python relPtPlotter.py sim_results.csv relPt_gain.pdf 

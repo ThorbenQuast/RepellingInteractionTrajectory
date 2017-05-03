@@ -8,7 +8,6 @@
 #include <cstdlib>
 #include <utility>
 
-double eta_q(double);
 
 std::pair<double, double> compute_phi_theta(double, double, double, double);
 void generateKinematic(Particle*, Particle*, Particle*, Particle*);

@@ -18,6 +18,7 @@ simResult::simResult() {
   _data["py_q1_in"] = std::vector<double>();
   _data["pz_q1_in"] = std::vector<double>();
   _data["E_q1_in"] = std::vector<double>();
+  _data["x_q1"] = std::vector<double>();
   _data["px_q1_out"] = std::vector<double>();
   _data["py_q1_out"] = std::vector<double>();
   _data["pz_q1_out"] = std::vector<double>();
@@ -28,6 +29,7 @@ simResult::simResult() {
   _data["py_e2_in"] = std::vector<double>();
   _data["pz_e2_in"] = std::vector<double>();
   _data["E_e2_in"] = std::vector<double>();
+  _data["x_q2"] = std::vector<double>();
   _data["mass_q2"] = std::vector<double>();
   _data["IP2_x"] = std::vector<double>();
   _data["IP2_y"] = std::vector<double>();

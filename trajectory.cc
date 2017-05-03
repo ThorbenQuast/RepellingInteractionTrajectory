@@ -28,7 +28,8 @@ int main(int argc, char* argv[]){
   double radialDistance = 1e-15;   //maximum distance of the two generated quarks in the plane perpendicular to the beam axis
   //double coincidenceTime = 10.0e-23; //equivalent to the time bin = coincidence time of both scattering processes, maximum time interval in which the two quarks are creared
   double coincidenceTime = 0.; //equivalent to the time bin = coincidence time of both scattering processes, maximum time interval in which the two quarks are creared
-  double angleCut = 1.;    //initial direction angle cut (if the angle between the quarks is higher after generation, trajectories are not computed)
+  double angleCut = 10.;    //initial direction angle cut (if the angle between the quarks is higher after generation, trajectories are not computed)
+  double electronBeamAngle = 1.;  //angle between the incident electron beams
   double T_max = 1e-8;   //maximum time to simulate the trajectory
 
 
@@ -36,13 +37,14 @@ int main(int argc, char* argv[]){
   results.set_energy(Energy);
   results.set_radialDistance(radialDistance);
   results.set_coincidenceTime(coincidenceTime);
+  results.set_electronBeamAngle(electronBeamAngle);
   results.set_angleCut(angleCut);
   results.set_T_max(T_max);
   results.set_repulsion(repulsion);
 
   std::pair<double, double> _event_result;
   for (size_t i=0; i<N_sim; ) {
-    _event_result = runTrajectorySimulation(repulsion, Energy, radialDistance, coincidenceTime, angleCut, T_max, results);
+    _event_result = runTrajectorySimulation(repulsion, Energy, radialDistance, coincidenceTime, angleCut, electronBeamAngle, T_max, results);
     if (_event_result.first >= 0) {
       i++;
       std::cout<<std::endl<<"  ****  "<<std::endl<<std::endl;;

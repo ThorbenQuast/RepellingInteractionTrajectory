@@ -46,7 +46,8 @@ target_link_libraries (${libname} pxl-core pxl-hep)
 LINK_LIBRARIES( ${libname} )
 
 # make the executable main
-ADD_EXECUTABLE( main main.cc )
+ADD_EXECUTABLE( trajectory trajectory.cc )
+ADD_EXECUTABLE( integral integral.cc )
 
 
 

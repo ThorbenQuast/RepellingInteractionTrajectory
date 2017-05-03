@@ -1,6 +1,6 @@
 #include "trajectory.h"
 
-std::pair<double, double> runTrajectorySimulation(bool repulsion, double Energy, double radialDistance, double coincidenceTime, double angleCut, double T_max, simResult &results) {
+std::pair<double, double> runTrajectorySimulation(bool repulsion, double Energy, double radialDistance, double coincidenceTime, double angleCut, double electronBeamAngle, double T_max, simResult &results) {
   Event* event = new Event();
 
   //set the experimental conditions
@@ -8,6 +8,7 @@ std::pair<double, double> runTrajectorySimulation(bool repulsion, double Energy,
   event->setMaxRadius(radialDistance);
   event->setCoincidenceTime(coincidenceTime);
   event->setAngleCut(angleCut);
+  event->setElectronBeamAngle(electronBeamAngle);
 
   //generate it
   event->generate(results);

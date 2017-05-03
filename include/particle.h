@@ -13,6 +13,7 @@ class Particle : public pxl::Particle {
   public:
     Particle();
     void setLabPosition(double, double, double, double);
+    void setBjorkenX(double);
     void FullBoost(Particle*);
     void computeMomentumFromForce(pxl::Basic3Vector, double);
     void computeStep(double);
@@ -27,11 +28,13 @@ class Particle : public pxl::Particle {
     double getX(size_t);
     double getLabTime();
     double getV(size_t);
+    double getBjorkenX();
     
   private:
     std::vector<double> lab_x;
     double lab_t;
     double eigen_t;
+    double bjorken_x;
 
 };
 
