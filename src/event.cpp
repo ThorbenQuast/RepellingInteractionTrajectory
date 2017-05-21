@@ -68,21 +68,29 @@ void Event::generate(simResult &results) {
   //define the quark masses to be other from the up or bottom
   double randMassA = rand()*1./(RAND_MAX);
   double massAGeV = randMassA<0.5 ? 0.0023 : 0.0048;
-  //double massAGeV = 0.0023;
 
   double randMassB = rand()*1./(RAND_MAX);
   double massBGeV = randMassB<0.5 ? 0.0023 : 0.0048;
-  //double massBGeV = 0.0023;
 
 
   //generate the relative displacements, ParticleA is always defined to be in the origin
   ParticleA->setLabPosition(0.0, 0.0, 0.0, 0.0);
-  double deltaX12 = _maxRadius*rand()*1./(RAND_MAX)/sqrt(3.);
-  //double deltaX12 = 1.0e-15;//_maxRadius;
-  double deltaY12 = _maxRadius*rand()*1./(RAND_MAX)/sqrt(3.);
-  //double deltaY12 = 0;
-  double deltaZ12 = _maxRadius*rand()*1./(RAND_MAX)/sqrt(3.);
-  //double deltaZ12 = 0;
+
+  double r_norm, r_try;
+  do {
+   r_norm = rand()*1./(RAND_MAX);
+   r_try = rand()*1./(RAND_MAX);
+  } while(r_norm < r_try);
+
+  double phi_displacement = rand()*2.*pi/(RAND_MAX);
+
+  double theta_displacement = acos(rand()*2./(RAND_MAX)-1.);   //from : http://mathworld.wolfram.com/SpherePointPicking.html
+
+
+  double deltaX12 = _maxRadius*r_norm*cos(phi_displacement)*sin(theta_displacement);
+  double deltaY12 = _maxRadius*r_norm*sin(phi_displacement)*sin(theta_displacement);
+  double deltaZ12 = _maxRadius*r_norm*cos(theta_displacement);
+
   ParticleB->setLabPosition(0.0, deltaX12, deltaY12, deltaZ12);
 
   //set the coincidence time:
