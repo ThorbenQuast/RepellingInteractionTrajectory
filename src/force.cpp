@@ -3,6 +3,7 @@
 
 // 1/r potential is modified analogous to the Lienard-Wiechert-potential in electro-magnetism:
 // https://en.wikipedia.org/wiki/Liénard–Wiechert_potential
+/*
 pxl::Basic3Vector Force(Particle* P, Particle* ParticleRef, bool repulsion) {
   //convert distances into natural unit!
   std::vector<double> dist;
@@ -25,10 +26,10 @@ pxl::Basic3Vector Force(Particle* P, Particle* ParticleRef, bool repulsion) {
 
   return F;
 }
+*/
 
-/*
-pxl::Basic3Vector ClassicForce(Particle* P, Particle* ParticleRef, bool repulsion) {
-//pxl::Basic3Vector Force(Particle* P, Particle* ParticleRef, bool repulsion) {
+//pxl::Basic3Vector ClassicForce(Particle* P, Particle* ParticleRef, bool repulsion) {
+pxl::Basic3Vector Force(Particle* P, Particle* ParticleRef, bool repulsion) {
   //convert distances into natural unit!
   std::vector<double> dist;
   for (size_t i=0; i<3; i++) dist.push_back((P->getX(i) - ParticleRef->getX(i))*meter_to_invGeV);
@@ -48,7 +49,7 @@ pxl::Basic3Vector ClassicForce(Particle* P, Particle* ParticleRef, bool repulsio
 }
 
 
-
+/*
 pxl::Basic3Vector _Force(Particle* P, Particle* ParticleRef, bool repulsion) {
 //todo: debug the boost into rest frame
 
