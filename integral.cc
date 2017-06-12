@@ -78,7 +78,18 @@ int main(int argc, char* argv[]){
 	//machine parameters
 	double Ep = 1.0;		//proton's mass is 1GeV
 	double Ee = 60.;		//electron energy is set to 60GeV
-	double s = 2.*Ee*Ep + pow(Ep, 2);	//center-of-mass energy squared
+
+
+	//boost energies into cm frame
+	double pe = sqrt((Ee*Ee - m_e*m_e));  // momentum of electron
+	double beta = pe / (Ee + Ep);  // beta of boost into CMS system
+	double gamma = pow(1 - pow(beta,2), -0.5);
+
+	Ep = Ep * gamma;  // energy of proton in CMS
+	Ee = (Ee - beta * pe) * gamma;  // energy of electron in CMS
+	double s = 4 * Ep * Ee;  
+
+
 
 	int N_granularity = 20000;		//number of steps, adjust here.
 
