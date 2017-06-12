@@ -73,6 +73,7 @@ double Particle::getBjorkenX() {
 
 void Particle::computeStep(double dt) {
   lab_t += dt;
+  std::cout<<"Lab t: "<<lab_t<<std::endl;
   eigen_t += dt/this->getGamma();
   double delta = 0;
   double p_component = 0;

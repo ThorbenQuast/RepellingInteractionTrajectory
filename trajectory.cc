@@ -25,7 +25,7 @@ int main(int argc, char* argv[]){
 
   //configuration
   double Energy = 60.;      //in GeV, energy of incoming electron beam
-  double radialDistance = 1e-15;   //maximum distance of the two generated quarks in the plane perpendicular to the beam axis
+  double radialDistance = 0.5e-15;   //maximum distance of the two generated quarks in the plane perpendicular to the beam axis
   //double coincidenceTime = 10.0e-23; //equivalent to the time bin = coincidence time of both scattering processes, maximum time interval in which the two quarks are creared
   double coincidenceTime = 0.; //equivalent to the time bin = coincidence time of both scattering processes, maximum time interval in which the two quarks are creared
   double angleCut = 10.;    //initial direction angle cut (if the angle between the quarks is higher after generation, trajectories are not computed)
