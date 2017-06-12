@@ -13,7 +13,7 @@ double a(double);
 double kappa(double);
 double xpdf(double);
 
-double d2sigma_dthetaq_dt(double, double, double);
+double d2sigma_dthetaq_dt(double, double);
 
 
 #endif

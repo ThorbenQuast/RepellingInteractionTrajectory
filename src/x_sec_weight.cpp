@@ -14,7 +14,7 @@ double kappa(double x) {
 }
 
 double xpdf(double x, double t) {
-  return a(x)*pow(log(t/l_pdf),kappa(x));
+  return a(x)*pow(2*log(t/l_pdf),kappa(x));
 };
 
 double eta_q(double theta) {
@@ -22,8 +22,8 @@ double eta_q(double theta) {
 };  
 
 
-double d2sigma_dthetaq_dt(double bjorken_x, double t, double s) {  
+double d2sigma_dthetaq_dt(double bjorken_x, double t) {  
+	if (bjorken_x <= 0 || bjorken_x > 1) return 0.0;
   if (t < 3.5) return 0.0;
   return xpdf(bjorken_x, t)/(bjorken_x * pow(t,2));
 };
-

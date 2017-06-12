@@ -84,7 +84,7 @@ void Event::generate(simResult &results) {
 
   double phi_displacement = rand()*2.*pi/(RAND_MAX);
 
-  double theta_displacement = acos(rand()*2./(RAND_MAX)-1.);   //from : http://mathworld.wolfram.com/SpherePointPicking.html
+  double theta_displacement = acos(rand()*2./(RAND_MAX)-1.0);   //from : http://mathworld.wolfram.com/SpherePointPicking.html
 
 
   double deltaX12 = _maxRadius*r_norm*cos(phi_displacement)*sin(theta_displacement);
@@ -142,7 +142,7 @@ void Event::generate(simResult &results) {
   /**********************/
 
 
-  weight = d2sigma_dthetaq_dt(OriginalQuarkA->getBjorkenX(), QA, _s) * d2sigma_dthetaq_dt(OriginalQuarkB->getBjorkenX(), QB, _s);
+  weight = d2sigma_dthetaq_dt(OriginalQuarkA->getBjorkenX(), QA) * d2sigma_dthetaq_dt(OriginalQuarkB->getBjorkenX(), QB);
 
   //cut on outgoing quark flight angle w.r.t. each other
   if (ParticleA->getDeltaR(ParticleB) > angleCut) weight = 0.;
