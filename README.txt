@@ -1,3 +1,5 @@
+Simulation code for "Acceleration by Strong Interactions", https://arxiv.org/abs/1706.07850
+
 List of dependencies:
 - cmake version 3.3.0
 - gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-17)
